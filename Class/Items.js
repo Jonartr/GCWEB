@@ -2,6 +2,7 @@ import {OBJLoader} from "../Loaders/OBJLoader.js";
 import {MTLLoader} from "../Loaders/MTLLoader.js";
 import * as THREE from "../three.module.js";
 
+
 export function aleronitem(scene){
 
          
@@ -18,8 +19,9 @@ export function aleronitem(scene){
                          function (object) {
           
                           object.scale.set(1,1,1);
-                           object.position.set(5,15,0);
+                           object.position.set(10,0,0);
                              scene.add(object);
+                             scene.Items = object;
                          },
                          function (xhr) {
                              console.log((xhr.loaded / xhr.total * 100) + '% cargado');
@@ -51,7 +53,8 @@ export function toolboxitem(scene){
          
                          object.scale.set(.2,.2,.2);
                           object.position.set(15,15,0);
-                            scene.add(object);
+                            scene.add(object);          
+
                         },
                         function (xhr) {
                             console.log((xhr.loaded / xhr.total * 100) + '% cargado');
@@ -82,6 +85,7 @@ export function escapeitem(scene){
                    object.scale.set(.5,.5,.5);
                     object.position.set(10,20,0);
                       scene.add(object);
+
                   },
                   function (xhr) {
                       console.log((xhr.loaded / xhr.total * 100) + '% cargado');
@@ -112,6 +116,7 @@ export function wheelitem(scene){
                    object.scale.set(.2,.2,.2);
                     object.position.set(-15,15,0);
                       scene.add(object);
+
                   },
                   function (xhr) {
                       console.log((xhr.loaded / xhr.total * 100) + '% cargado');
@@ -142,6 +147,8 @@ export function motoritem(scene){
                    object.scale.set(.7,.7,.7);
                     object.position.set(-10,15,0);
                       scene.add(object);
+    
+
                   },
                   function (xhr) {
                       console.log((xhr.loaded / xhr.total * 100) + '% cargado');
@@ -173,6 +180,8 @@ export function nitroitem(scene){
                    object.scale.set(.4,.4,.4);
                     object.position.set(10,10,0);
                       scene.add(object);
+                 
+
                   },
                   function (xhr) {
                       console.log((xhr.loaded / xhr.total * 100) + '% cargado');
@@ -204,6 +213,8 @@ export function dooritem(scene){
                    object.position.set(15,5,0);
                    object.rotation.z =  object.rotation.z +(Math.PI / 180*90);
                       scene.add(object);
+        
+
                   },
                   function (xhr) {
                       console.log((xhr.loaded / xhr.total * 100) + '% cargado');
@@ -233,8 +244,10 @@ export function suspensionitem(scene){
                   function (object) {
    
                    object.scale.set(.2,.2,.2);
-                    object.position.set(5,10,0);
+                    object.position.set(10,0,0);
                       scene.add(object);
+                      scene.Items = object;
+
                   },
                   function (xhr) {
                       console.log((xhr.loaded / xhr.total * 100) + '% cargado');

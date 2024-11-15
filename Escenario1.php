@@ -28,6 +28,7 @@
       import * as Carload from "./Class/CarsLoad.js";
       import * as Scenario from "./Class/Scenarios.js";
       import * as Fonts from "./Class/Fonts.js";
+      import * as Items from "./Class/Items.js";
   
 
 
@@ -72,7 +73,12 @@
       const buttonLogin = document.getElementById("btn-login");
       const buttonLogout = document.getElementById("btn-logout");
 
+      //==========================VARIABLES DE MODELOS Y OBJETOS=============================//
+      let car = null;
+      let item = null;
       let currentUser;
+
+
       buttonLogin.addEventListener("click", async function () {
         await signInWithPopup(auth, provider)
           .then((result) => {
@@ -115,6 +121,7 @@
       const skydomeimage = new THREE.TextureLoader().load("./skydome.jpg");
       const scene = new THREE.Scene();
       scene.userData = {};
+      scene.Items = {};
       scene.background = skydomeimage;
 
       const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight);
@@ -147,7 +154,10 @@
       scene.add(light, plane);
 
       Scenario.scenario_1(scene);
+      Items.suspensionitem(scene);
       Fonts.texthola(scene);
+
+      console.log(scene.Items);
 
       <?php
       if (isset($_GET['selectedCar'])) {
@@ -158,7 +168,7 @@
       }
       ?>
 
-      let car = null;
+      
 
       if (selectedCar) {
           switch(selectedCar) {
@@ -218,11 +228,32 @@
           }
       }
 
+
+      const Esfera = new THREE.SphereGeometry(1, 32, 32);
+      const Esferamat = new THREE.MeshBasicMaterial({
+        color: 0xff0000, // Color rojo
+        wireframe: true // Mostrar solo la malla (wireframe)
+      });
+      const Esferasi = new THREE.Mesh(Esfera, Esferamat);
+      scene.add(Esferasi);
+
+      
+      const Esfera2 = new THREE.SphereGeometry(1, 32, 32);
+      const Esferamat2 = new THREE.MeshBasicMaterial({
+        color: 0x00ff00, // Color rojo
+        wireframe: true // Mostrar solo la malla (wireframe)
+      });
+      const Esferasi2 = new THREE.Mesh(Esfera2, Esferamat2);
+      scene.add(Esferasi2);
+
+
+
       function animate() {
           requestAnimationFrame(animate);
           controls.update();
           renderer.render(scene, camera);
           updateCarPosition();
+          detectCollisions();
       }
 
       function writeUserData() {
@@ -230,6 +261,28 @@
           x: "Hola mundo"
         });
       }
+
+            // Función para detectar colisiones
+      function detectCollisions() {
+        if (!car) return false;
+        
+        Esferasi.position.copy(car.position);
+        Esferasi2.position.copy(scene.Items.position);
+
+        const PlayerHitbox = new THREE.Sphere(car.position,1);
+       //console.log(PlayerHitbox);
+        
+        const ObjHitbox = new THREE.Sphere(scene.Items.position,1);
+        //console.log(ObjHitbox)
+
+        if (PlayerHitbox.intersectsSphere(ObjHitbox)){
+          console.log("Colision");
+        }
+
+     
+      }
+
+
 
       animate();
     </script>

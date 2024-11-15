@@ -2,6 +2,10 @@ import * as THREE from '../three.module.js';
 import { MTLLoader } from '../Loaders/MTLLoader.js';
 import { OBJLoader } from '../Loaders/OBJLoader.js';
 
+const raycaster = new THREE.Raycaster();
+const mouse = new THREE.Vector2();
+
+
 function loadCar(scene, carType, mtlPath, objPath, onLoadCallback) {
   if (!scene.userData) {
     scene.userData = {};
@@ -17,6 +21,8 @@ function loadCar(scene, carType, mtlPath, objPath, onLoadCallback) {
       object.scale.set(0.05, 0.05, 0.05);
       object.position.set(0, 0, 0);
       scene.add(object);
+
+
     
       // Asignar el objeto al userData correspondiente
       scene.userData[carType] = object;
