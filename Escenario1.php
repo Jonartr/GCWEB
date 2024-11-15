@@ -88,7 +88,7 @@
 
               const user = result.user;
               currentUser = user;
-                alert(currentUser);
+                alert(currentUser.email);
           //    console.log(user.email); // Asegúrate de que user.email esté definido
               writeUserData();
             } else {
