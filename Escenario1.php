@@ -2,6 +2,8 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"> -->
+  <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script> -->
   <?php
         header('Access-Control-Allow-Origin: *');
      header('Content-Type: text/html; charset=UTF-8'); // Asegúrate de que el tipo de contenido sea text/html
@@ -17,11 +19,15 @@
     </style>
   </head>
   <body>
-  <button type="button" id="btn-login">Login</button>
-  <button type="button" id="btn-logout">Logout</button>
+    <div class = "row col-3 mx-auto">
+        <button type="button"  class="btn btn-success mt-2 " id="btn-login">Login</button>
+       
+        <button type="button" class="btn btn-warning" id="btn-logout">Logout</button>
+    </div>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/examples/js/loaders/FBXLoader.js"></script>
-
+<div class="col-6">
     <script type="module">
       import * as THREE from "./three.module.js";
       import { OrbitControls } from "./OrbitControls.js";
@@ -29,8 +35,6 @@
       import * as Scenario from "./Class/Scenarios.js";
       import * as Fonts from "./Class/Fonts.js";
       import * as Items from "./Class/Items.js";
-  
-
 
       //====================================FIREBASE====================================//
       // Import the functions you need from the SDKs you need
@@ -76,7 +80,10 @@
       //==========================VARIABLES DE MODELOS Y OBJETOS=============================//
       let car = null;
       let item = null;
-      let currentUser;
+      let currentUser = null;
+      let hpPlayer1 = null
+      let colissionInterval = 200;
+      let lastCollisionCheck = 0;
 
 
       buttonLogin.addEventListener("click", async function () {
@@ -88,7 +95,7 @@
 
               const user = result.user;
               currentUser = user;
-                alert(currentUser.email);
+                alert(currentUser.uid);
           //    console.log(user.email); // Asegúrate de que user.email esté definido
               writeUserData();
             } else {
@@ -111,6 +118,7 @@
         await signOut(auth)
           .then(() => {
             console.log("Sign-out successful");
+            currentUser = null;
           })
           .catch((error) => {
             console.log("An error happened", error);
@@ -122,6 +130,7 @@
       const scene = new THREE.Scene();
       scene.userData = {};
       scene.Items = {};
+      scene.Fonts = {};
       scene.background = skydomeimage;
 
       const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight);
@@ -151,13 +160,13 @@
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
 
-      scene.add(light, plane);
+      scene.add(light);
 
-      Scenario.scenario_1(scene);
-      Items.suspensionitem(scene);
-      Fonts.texthola(scene);
+      Scenario.scenario_3(scene);
+ 
+    //=========================================================================================//
 
-      console.log(scene.Items);
+      //console.log(scene.Items);
 
       <?php
       if (isset($_GET['selectedCar'])) {
@@ -173,7 +182,9 @@
       if (selectedCar) {
           switch(selectedCar) {
               case 'normalCar':
-                  Carload.loadnormalcar(scene, (loadedCar) => car = loadedCar);
+                  Carload.loadnormalcar(scene, (loadedCar) =>{ car = loadedCar; //console.log(scene.Fonts) 
+
+                  });
                   break;
               case 'muscleCar':
                   Carload.loadmusclecar(scene, (loadedCar) => car = loadedCar);
@@ -191,6 +202,19 @@
                   console.error('Modelo de coche no reconocido:', selectedCar);
                   break;
           }
+
+          Items.suspensionitem(scene, selectedCar);
+          Items.aleronitem(scene, selectedCar);
+
+          Items.wheelitem(scene, selectedCar);
+          Items.toolboxitem(scene, selectedCar);
+
+          Items.motoritem(scene, selectedCar);
+          Items.escapeitem(scene, selectedCar);
+          
+          Items.nitroitem(scene, selectedCar);
+          Items.dooritem(scene, selectedCar);
+
       } else {
           console.error('No se ha seleccionado ningún coche.');
       }
@@ -208,23 +232,23 @@
           if (!car) return;
 
           if (keysPressed['w']) {
-              car.position.z -= 0.1;
+              car.position.z -= 0.3;
           }
           if (keysPressed['s']) {
-              car.position.z += 0.1;
+              car.position.z += 0.3;
           }
           if (keysPressed['a']) {
-              car.position.x -= 0.1;
+              car.position.x -= 0.3;
           }
           if (keysPressed['d']) {
-              car.position.x += 0.1;
+              car.position.x += 0.3;
           }
 
-          if (keysPressed['e']) {
-              car.rotation.y += 0.01;
-          }
           if (keysPressed['q']) {
-              car.rotation.y -= 0.01;
+              car.rotation.y += 0.05;
+          }
+          if (keysPressed['e']) {
+              car.rotation.y -= 0.05;
           }
       }
 
@@ -235,7 +259,7 @@
         wireframe: true // Mostrar solo la malla (wireframe)
       });
       const Esferasi = new THREE.Mesh(Esfera, Esferamat);
-      scene.add(Esferasi);
+ //     scene.add(Esferasi);
 
       
       const Esfera2 = new THREE.SphereGeometry(1, 32, 32);
@@ -244,21 +268,25 @@
         wireframe: true // Mostrar solo la malla (wireframe)
       });
       const Esferasi2 = new THREE.Mesh(Esfera2, Esferamat2);
-      scene.add(Esferasi2);
+ //     scene.add(Esferasi2);
 
+      
+      const Esfera3 = new THREE.SphereGeometry(1, 32, 32);
+      const Esferamat3 = new THREE.MeshBasicMaterial({
+        color: 0x0000ff, // Color rojo
+        wireframe: true // Mostrar solo la malla (wireframe)
+      });
+      const Esferasi3 = new THREE.Mesh(Esfera3, Esferamat3);
+    //  scene.add(Esferasi3);
 
-
-      function animate() {
-          requestAnimationFrame(animate);
-          controls.update();
-          renderer.render(scene, camera);
-          updateCarPosition();
-          detectCollisions();
-      }
+    
+      
+      
 
       function writeUserData() {
-        set(ref(db, "jugadores/1" ), {
-          x: "Hola mundo"
+        set(ref(db, "jugadores/" + currentUser.uid ), {
+          x: car.position.x,
+          z: car.position.z
         });
       }
 
@@ -266,25 +294,122 @@
       function detectCollisions() {
         if (!car) return false;
         
-        Esferasi.position.copy(car.position);
-        Esferasi2.position.copy(scene.Items.position);
+        // Esferasi.position.copy(car.position);
+        // Esferasi2.position.copy(scene.Items.aleron.position);
+        // Esferasi3.position.copy(scene.Items.suspension.position);
 
         const PlayerHitbox = new THREE.Sphere(car.position,1);
-       //console.log(PlayerHitbox);
         
-        const ObjHitbox = new THREE.Sphere(scene.Items.position,1);
-        //console.log(ObjHitbox)
+        const ObjHitbox = new THREE.Sphere(scene.Items.aleron.position,1);
+     //  console.log(scene.Items.aleron.position)
+          
+        const ObjHitbox2 = new THREE.Sphere(scene.Items.suspension.position,1);
+      //  console.log(scene.Items.suspension.position)
+
+      const ObjHitbox3 = new THREE.Sphere(scene.Items.toolbox.position,1);
+     //  console.log(scene.Items.aleron.position)
+          
+        const ObjHitbox4 = new THREE.Sphere(scene.Items.escape.position,1);
+      //  console.log(scene.Items.suspension.position)
+
+      const ObjHitbox5 = new THREE.Sphere(scene.Items.motor.position,1);
+     //  console.log(scene.Items.aleron.position)
+          
+        const ObjHitbox6 = new THREE.Sphere(scene.Items.nitro.position,1);
+      //  console.log(scene.Items.suspension.position)
+
+      const ObjHitbox7 = new THREE.Sphere(scene.Items.puerta.position,1);
+      //  console.log(scene.Items.suspension.position)
+
+      const ObjHitbox8 = new THREE.Sphere(scene.Items.llanta.position,1);
+      //  console.log(scene.Items.suspension.position)
+
+       //console.log(selectedCar);
 
         if (PlayerHitbox.intersectsSphere(ObjHitbox)){
-          console.log("Colision");
+          console.log("Colision aleron");
+          Items.aleronitem(scene, selectedCar); 
+
+        }
+        
+        if (PlayerHitbox.intersectsSphere(ObjHitbox2)){
+          console.log("Colision suspension");
+          Items.dooritem(scene, selectedCar); 
+
+        }
+        
+        if (PlayerHitbox.intersectsSphere(ObjHitbox3)){
+          console.log("Recuperas vida");
+          Items.toolboxitem(scene, selectedCar); 
+        }
+
+        if (PlayerHitbox.intersectsSphere(ObjHitbox4)){
+          console.log("Colision escape");
+          Items.escapeitem(scene, selectedCar); 
+
+        }
+        
+        if (PlayerHitbox.intersectsSphere(ObjHitbox5)){
+          console.log("Colision motor");
+          Items.motoritem(scene, selectedCar); 
+        }
+
+
+        if (PlayerHitbox.intersectsSphere(ObjHitbox6)){
+          console.log("Colision nitro");
+          Items.nitroitem(scene, selectedCar); 
+
+        }
+     
+        if (PlayerHitbox.intersectsSphere(ObjHitbox7)){
+          console.log("Colision puerta");
+          Items.dooritem(scene, selectedCar); 
+
+        }
+
+        
+        if (PlayerHitbox.intersectsSphere(ObjHitbox8)){
+          console.log("Colision llanta");
+          Items.wheelitem(scene, selectedCar); 
         }
 
      
       }
 
+      function FontFollow(){
+        Fonts.lifetext.position.set(car.position.x - 2.5, car.position.y + 2, car.position.z);
+        Fonts.lifetext.rotation.y  =  car.rotation.y;
+      }
 
 
+     
+      function animate() {
+
+          requestAnimationFrame(animate);
+          controls.update();
+          renderer.render(scene, camera);
+          updateCarPosition();
+          FontFollow();
+
+
+        const now = performance.now();
+
+        if (now - lastCollisionCheck > colissionInterval){
+           detectCollisions();
+           lastCollisionCheck = now;
+        }
+
+     
+
+          if(currentUser != null){
+            writeUserData();
+          }
+      }
+
+        
       animate();
+      //window.onload = init;
     </script>
+    </div>
   </body>
 </html>
