@@ -3,7 +3,7 @@ body {
     padding: 0;
     font-family: 'melted monster', sans-serif;
     color: white;
-    background-image: url('../img/Fondo20.jpg'); /* Reemplaza 'fondo.jpg' con la ruta de tu imagen de fondo */
+    background-image: url('../img/background.jpg'); /* Reemplaza 'fondo.jpg' con la ruta de tu imagen de fondo */
     background-size: cover;
     }
 

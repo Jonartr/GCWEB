@@ -27,7 +27,7 @@
 <script>
     function openSettings() {
         // Replace 'settings.html' with the path to your desired HTML file
-        location.href = 'index.html';
+        location.href = 'index.php';
     }
 </script>
 

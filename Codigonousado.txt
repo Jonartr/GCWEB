@@ -1,0 +1,91 @@
+     // Esferasi.position.copy(car.position);
+        // Esferasi2.position.copy(scene.Items.aleron.position);
+        // Esferasi3.position.copy(scene.Items.suspension.position);
+
+      //   const PlayerHitbox = new THREE.Sphere(car.position, 2);
+
+      //   const ObjHitbox = new THREE.Sphere(scene.Items.aleron.position,5);
+      //  //   console.log(scene.Items.aleron.scale.x)
+
+      //   const ObjHitbox2 = new THREE.Sphere(scene.Items.suspension.position, 5);
+      //   //  console.log(scene.Items.suspension.position)
+
+      //   const ObjHitbox3 = new THREE.Sphere(scene.Items.toolbox.position, 5);
+      //   //  console.log(scene.Items.aleron.position)
+
+      //   const ObjHitbox4 = new THREE.Sphere(scene.Items.escape.position, 5);
+      //   //  console.log(scene.Items.suspension.position)
+
+      //   const ObjHitbox5 = new THREE.Sphere(scene.Items.motor.position, 5);
+      //   //  console.log(scene.Items.aleron.position)
+
+      //   const ObjHitbox6 = new THREE.Sphere(scene.Items.nitro.position, 5);
+      //   //  console.log(scene.Items.suspension.position)
+
+      //   const ObjHitbox7 = new THREE.Sphere(scene.Items.puerta.position, 5);
+      //   //  console.log(scene.Items.suspension.position)
+
+      //   const ObjHitbox8 = new THREE.Sphere(scene.Items.llanta.position, 5);
+      //   //  console.log(scene.Items.suspension.position)
+
+      //   //console.log(selectedCar);
+
+      //   if (PlayerHitbox.intersectsSphere(ObjHitbox)) {
+      //     console.log("Colision aleron");
+      //     Items.aleronitem(scene, selectedCar,0);
+
+      //   }
+
+      //   if (PlayerHitbox.intersectsSphere(ObjHitbox2)) {
+      //     console.log("Colision suspension");
+      //     Items.suspensionitem(scene, selectedCar,0);
+
+      //   }
+
+      //   if (PlayerHitbox.intersectsSphere(ObjHitbox3)) {
+      //     console.log("Recuperas vida");
+      //     Items.toolboxitem(scene, selectedCar,0);
+      //   }
+
+      //   if (PlayerHitbox.intersectsSphere(ObjHitbox4)) {
+      //     console.log("Colision escape");
+      //     Items.escapeitem(scene, selectedCar,0);
+
+      //   }
+
+      //   if (PlayerHitbox.intersectsSphere(ObjHitbox5)) {
+      //     console.log("Colision motor");
+      //     Items.motoritem(scene, selectedCar,0);
+      //   }
+
+
+      //   if (PlayerHitbox.intersectsSphere(ObjHitbox6)) {
+      //     console.log("Colision nitro");
+      //     Items.nitroitem(scene, selectedCar,0);
+
+      //   }
+
+      //   if (PlayerHitbox.intersectsSphere(ObjHitbox7)) {
+      //     console.log("Colision puerta");
+      //     Items.dooritem(scene, selectedCar,0);
+
+      //   }
+
+
+      //   if (PlayerHitbox.intersectsSphere(ObjHitbox8)) {
+      //     console.log("Colision llanta");
+      //     Items.wheelitem(scene, selectedCar,0);
+      //   }
+      
+      
+        // Items.suspensionitem(scene, selectedCar, 3000);
+        // Items.aleronitem(scene, selectedCar, 3000);
+
+        // Items.wheelitem(scene, selectedCar, 3000);
+        // Items.toolboxitem(scene, selectedCar, 3000);
+
+        // Items.motoritem(scene, selectedCar, 3000);
+        // Items.escapeitem(scene, selectedCar, 3000);
+
+        // Items.nitroitem(scene, selectedCar, 3000);
+        // Items.dooritem(scene, selectedCar, 3000);

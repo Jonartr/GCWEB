@@ -2,8 +2,8 @@
 <html lang="en">
 
 <head>
-  <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous"> -->
-  <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script> -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
   <?php
   header('Access-Control-Allow-Origin: *');
   header('Content-Type: text/html; charset=UTF-8'); // Asegúrate de que el tipo de contenido sea text/html
@@ -29,6 +29,15 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/examples/js/loaders/FBXLoader.js"></script>
   <div class="col-6">
     <script type="module">
+      <?php
+      if (isset($_GET['selectedCar'])) {
+        $selectedCar = $_GET['selectedCar'];
+        echo "const selectedCar = '$selectedCar';";
+      } else {
+        echo "const selectedCar = null;";
+      }
+      ?>
+
       import * as THREE from "./three.module.js";
       import {
         OrbitControls
@@ -84,13 +93,14 @@
       const buttonLogout = document.getElementById("btn-logout");
 
       //==========================VARIABLES DE MODELOS Y OBJETOS=============================//
-      let car = null;
+      let car = null,
+        car2 = null;
       let item = null;
       let currentUser = null;
       let hpPlayer1 = null
       let colissionInterval = 100;
       let lastCollisionCheck = 0;
-
+      var userId = 1;
 
       buttonLogin.addEventListener("click", async function() {
         await signInWithPopup(auth, provider)
@@ -102,21 +112,22 @@
               const user = result.user;
               currentUser = user;
               alert(currentUser.uid);
-              //    console.log(user.email); // Asegúrate de que user.email esté definido
               writeUserData();
+
+              // Load cars for the user
+              const userId = currentUser.uid;
+              car.userId = userId;
+              console.log(car.userId)
+          //    loadCarsForUser(scene, userId);
             } else {
               console.error("No se pudieron recuperar los datos del usuario.");
             }
-
-
           })
           .catch((error) => {
-
             const errorCode = error.code;
             const errorMessage = error.message;
-            //    const email = error.customData.email;
             const credential = GoogleAuthProvider.credentialFromError(error);
-            // console.error(`Error Code: ${errorCode}, Message: ${errorMessage}, Email: ${email}`);
+            console.error(`Error Code: ${errorCode}, Message: ${errorMessage}`);
           });
       });
 
@@ -176,14 +187,6 @@
 
       //console.log(scene.Items);
 
-      <?php
-      if (isset($_GET['selectedCar'])) {
-        $selectedCar = $_GET['selectedCar'];
-        echo "const selectedCar = '$selectedCar';";
-      } else {
-        echo "const selectedCar = null;";
-      }
-      ?>
 
 
 
@@ -192,8 +195,9 @@
           case 'normalCar':
             Carload.loadnormalcar(scene, (loadedCar) => {
               car = loadedCar; //console.log(scene.Fonts) 
-
+              console.log(car.userId);
             });
+
             break;
           case 'muscleCar':
             Carload.loadmusclecar(scene, (loadedCar) => car = loadedCar);
@@ -214,21 +218,12 @@
 
 
 
-        Items.suspensionitem(scene, selectedCar, 3000);
-        Items.aleronitem(scene, selectedCar, 3000);
-
-        Items.wheelitem(scene, selectedCar, 3000);
-        Items.toolboxitem(scene, selectedCar, 3000);
-
-        Items.motoritem(scene, selectedCar, 3000);
-        Items.escapeitem(scene, selectedCar, 3000);
-
-        Items.nitroitem(scene, selectedCar, 3000);
-        Items.dooritem(scene, selectedCar, 3000);
 
       } else {
         console.error('No se ha seleccionado ningún coche.');
       }
+
+      console.log(car);
 
       const keysPressed = {};
       document.addEventListener('keydown', (event) => {
@@ -263,6 +258,30 @@
         }
       }
 
+      function updateCarPosition2() {
+        if (!car2) return;
+
+        if (keysPressed['i']) {
+          car2.position.z -= 0.3;
+        }
+        if (keysPressed['k']) {
+          car2.position.z += 0.3;
+        }
+        if (keysPressed['j']) {
+          car2.position.x -= 0.3;
+        }
+        if (keysPressed['l']) {
+          car2.position.x += 0.3;
+        }
+
+        if (keysPressed['u']) {
+          car2.rotation.y += 0.05;
+        }
+        if (keysPressed['o']) {
+          car2.rotation.y -= 0.05;
+        }
+      }
+
 
 
       function writeUserData() {
@@ -274,86 +293,25 @@
 
       // Función para detectar colisiones
       function detectCollisions() {
-        if (!car) return false;
+        if (!car || !car2) return false;
 
-        // Esferasi.position.copy(car.position);
-        // Esferasi2.position.copy(scene.Items.aleron.position);
-        // Esferasi3.position.copy(scene.Items.suspension.position);
 
-        const PlayerHitbox = new THREE.Sphere(car.position, 2);
+        // const PlayerHitbox = new THREE.Sphere(car.position, 2);
+        // const PlayerHitbox2 = new THREE.Sphere(car2.position, 2);
 
-        const ObjHitbox = new THREE.Sphere(scene.Items.aleron.position,5);
-       //   console.log(scene.Items.aleron.scale.x)
 
-        const ObjHitbox2 = new THREE.Sphere(scene.Items.suspension.position, 5);
-        //  console.log(scene.Items.suspension.position)
+        const PlayerHitbox = new THREE.Box3();
+        PlayerHitbox.setFromObject(car);
 
-        const ObjHitbox3 = new THREE.Sphere(scene.Items.toolbox.position, 5);
-        //  console.log(scene.Items.aleron.position)
+        const PlayerHitbox2 = new THREE.Box3();
+        PlayerHitbox2.setFromObject(car2);
 
-        const ObjHitbox4 = new THREE.Sphere(scene.Items.escape.position, 5);
-        //  console.log(scene.Items.suspension.position)
+        if (PlayerHitbox.intersectsBox(PlayerHitbox2)) {
+          console.log("Colision coches");
 
-        const ObjHitbox5 = new THREE.Sphere(scene.Items.motor.position, 5);
-        //  console.log(scene.Items.aleron.position)
-
-        const ObjHitbox6 = new THREE.Sphere(scene.Items.nitro.position, 5);
-        //  console.log(scene.Items.suspension.position)
-
-        const ObjHitbox7 = new THREE.Sphere(scene.Items.puerta.position, 5);
-        //  console.log(scene.Items.suspension.position)
-
-        const ObjHitbox8 = new THREE.Sphere(scene.Items.llanta.position, 5);
-        //  console.log(scene.Items.suspension.position)
-
-        //console.log(selectedCar);
-
-        if (PlayerHitbox.intersectsSphere(ObjHitbox)) {
-          console.log("Colision aleron");
-          Items.aleronitem(scene, selectedCar,0);
 
         }
 
-        if (PlayerHitbox.intersectsSphere(ObjHitbox2)) {
-          console.log("Colision suspension");
-          Items.suspensionitem(scene, selectedCar,0);
-
-        }
-
-        if (PlayerHitbox.intersectsSphere(ObjHitbox3)) {
-          console.log("Recuperas vida");
-          Items.toolboxitem(scene, selectedCar,0);
-        }
-
-        if (PlayerHitbox.intersectsSphere(ObjHitbox4)) {
-          console.log("Colision escape");
-          Items.escapeitem(scene, selectedCar,0);
-
-        }
-
-        if (PlayerHitbox.intersectsSphere(ObjHitbox5)) {
-          console.log("Colision motor");
-          Items.motoritem(scene, selectedCar,0);
-        }
-
-
-        if (PlayerHitbox.intersectsSphere(ObjHitbox6)) {
-          console.log("Colision nitro");
-          Items.nitroitem(scene, selectedCar,0);
-
-        }
-
-        if (PlayerHitbox.intersectsSphere(ObjHitbox7)) {
-          console.log("Colision puerta");
-          Items.dooritem(scene, selectedCar,0);
-
-        }
-
-
-        if (PlayerHitbox.intersectsSphere(ObjHitbox8)) {
-          console.log("Colision llanta");
-          Items.wheelitem(scene, selectedCar,0);
-        }
 
 
       }
@@ -361,6 +319,9 @@
       function FontFollow() {
         Fonts.lifetext.position.set(car.position.x - 2.5, car.position.y + 2, car.position.z);
         Fonts.lifetext.rotation.y = car.rotation.y;
+
+        // Fonts.lifetext.position.set(car2.position.x - 2.5, car2.position.y + 2, car2.position.z);
+        // Fonts.lifetext.rotation.y = car2.rotation.y;
       }
 
 
@@ -371,6 +332,7 @@
         controls.update();
         renderer.render(scene, camera);
         updateCarPosition();
+        updateCarPosition2();
         FontFollow();
 
 

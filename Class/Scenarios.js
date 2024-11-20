@@ -12,11 +12,11 @@ export function scenario_1 (scene){
              const loader = new OBJLoader();
              loader.setMaterials(materials);
               loader.load(
-                  './estadio/estadio.obj', // Ruta de tu archivo OBJ
+                  './escenario/estadio/estadio.obj', // Ruta de tu archivo OBJ
                   function (object) {
    
                    object.scale.set(.5,.5,.5);
-                    object.position.set(0,-5,0);
+                    object.position.set(0,0,0);
                       scene.add(object);
                   },
                   function (xhr) {
@@ -46,7 +46,7 @@ export function scenario_2 (scene){
                   function (object) {
    
                    object.scale.set(.5,.5,.5);
-                    object.position.set(0,0,0);
+                    object.position.set(0,-4,0);
                       scene.add(object);
                   },
                   function (xhr) {
